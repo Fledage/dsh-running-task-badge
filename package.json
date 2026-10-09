@@ -1,0 +1,38 @@
+{
+  "name": "dsh-running-task-badge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tab badge with the number of running sessions, and a browser notification when one finishes.",
+  "type": "module",
+  "license": "MIT",
+  "icon": "./icon.svg",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json",
+    "./locale/zh.json": "./locale/zh.json",
+    "./locale/en.json": "./locale/en.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "icon.svg",
+    "locale"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-session"
+      ]
+    }
+  }
+}

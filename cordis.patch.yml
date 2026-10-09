@@ -1,0 +1,4 @@
+- insert:
+    - id: running-task-badge
+      name: 'dsh-running-task-badge'
+      config: {}
