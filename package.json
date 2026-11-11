@@ -1,8 +1,8 @@
 {
   "name": "dsh-running-task-badge",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "Tab badge with the number of running sessions, and a browser notification when one finishes.",
+  "description": "Tab badge with the number of running sessions.",
   "type": "module",
   "license": "MIT",
   "icon": "./icon.svg",

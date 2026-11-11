@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Running Task Badge",
-    "description": "Shows the number of running tasks as a badge on the browser tab icon, and sends a system notification when a task finishes."
+    "description": "Shows the number of running tasks as a badge on the browser tab icon."
   }
 }

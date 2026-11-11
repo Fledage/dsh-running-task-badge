@@ -1,11 +1,10 @@
 # dsh-running-task-badge
 
-给 [DeepSeek Harness](https://github.com/deepseek-ai) Web UI 用的插件：**在浏览器标签页图标上显示正在运行的任务数量**，并在**任务完成时发送系统通知**。
+给 [DeepSeek Harness](https://github.com/deepseek-ai) Web UI 用的插件：**在浏览器标签页图标上显示正在运行的任务数量**。
 
 ## 功能
 
-- **标签页角标** —— 只要有会话在运行，标签页图标就会变成「鲸鱼 + 数字角标」，自绘 SVG 通过 `data:` URI 改写页面上亮/暗两个 `link[rel="icon"]`，因此**所有浏览器**都可见，不依赖 PWA 安装。
-- **完成通知** —— 任务结束（从「运行中」变为「已结束」）时弹出一条系统通知：**任务名作为标题**，`任务已完成` 作为正文。这样多个任务接连完成时，通知中心里读起来就是一条可扫视的列表。
+- **标签页角标** —— 只要有会话在运行，标签页图标就会变成「鲸鱼 + 数字角标」，自绘 SVG 通过 `data:` URI 改写页面上亮/暗两个 `link[rel="icon"]`，因此**所有浏览器**都可见，不依赖 PWA 安装。超过 99 显示 `99+`。
 - **应用角标** —— 额外镜像到 `navigator.setAppBadge()`，支持的浏览器（已安装为 PWA 时）会在任务栏/程序坞上也显示数字。
 
 ## 统计口径
@@ -15,28 +14,26 @@
 ## 安装
 
 ```
-plugin_manager { action: "install_bundle", target: "<本仓库的绝对路径>" }
+plugin_manager { action: "install_bundle", target: "github:Fledage/dsh-running-task-badge" }
 ```
 
 安装会写入当前 profile 的 `package.json` 与 `cordis.patch.yml`，对该 profile 下**所有会话**生效，并且**重启后保留**。装完刷新页面即可。
 
 ## 使用说明
 
-- **通知权限**：采用**手势触发**。仅在确实有任务在跑时挂一次 `pointerdown`/`keydown` 监听，等你下次点击/按键时才弹权限框 —— 既不打扰，也比「加载即请求」可靠得多（部分浏览器要求用户手势）。拒绝授权只会关掉通知，**角标不受影响**。
-- **多标签页**：每个标签页的角标各自独立显示；通知按会话 id 加 `tag`，所以多个标签页同时开着也只会折叠成**一条**通知。
+- **多标签页**：每个标签页的角标各自独立显示。
 - **纯浏览器行为**：本插件不渲染任何页面内容（座位返回 `null`），也不写入 DOM 的其他部分，只在计数大于 0 时临时改写页面自带的 favicon 链接，归零或卸载时**完整还原**。
 
 ## 兼容性
 
-- 角标需要浏览器支持 SVG favicon（现代浏览器均支持）；`setAppBadge` 与 `Notification` 都是**可选增强**，缺失时静默降级，角标仍然工作。
-- `Notification` 与 `setAppBadge` 需要安全上下文（`https://` 或 `http://127.0.0.1`）。
-- 页面关闭后不再有通知（浏览器页面级通知无法跨关闭的页面存活）。
+- 角标需要浏览器支持 SVG favicon（现代浏览器均支持）；`setAppBadge` 是**可选增强**，缺失时静默降级，角标仍然工作。
+- `setAppBadge` 需要安全上下文（`https://` 或 `http://127.0.0.1`）。
 
 ## 文件结构
 
 | 文件 | 作用 |
 |---|---|
-| `client.js` | 全部逻辑：角标绘制、通知、权限手势、还原 |
+| `client.js` | 全部逻辑：角标绘制与还原 |
 | `index.js` | Host 半侧，空实现（无 Host 侧行为） |
 | `package.json` | Bundle 清单 + Client 清单 |
 | `cordis.patch.yml` | 插入 `running-task-badge` 行 |
@@ -49,11 +46,13 @@ plugin_manager { action: "install_bundle", target: "<本仓库的绝对路径>" 
 
 鲸鱼轮廓取自 Harness 自带的 `favicon.svg`，逐字节一致。
 
+> v1.0 曾内置「任务完成系统通知」，v1.1 起移除，只保留角标（通知交给 dsh-pet 等专门插件）。
+
 ## English
 
-A DeepSeek Harness Web UI plugin that shows **the number of running tasks as a badge on the browser tab icon**, and sends **a system notification when a task finishes**.
+A DeepSeek Harness Web UI plugin that shows **the number of running tasks as a badge on the browser tab icon**.
 
-One running session is one task; subagent sessions are not counted. The count comes from the `useSessions` selector hook on the `shell.overlay` seat — no polling. The tab badge retargets the page's own light/dark `link[rel="icon"]` hrefs to a generated `data:` SVG, so it works in every browser; the count is also mirrored to `navigator.setAppBadge()` where available. Notification permission is requested on the first user gesture after a task starts, and a refusal only disables notices, never the badge. The plugin paints nothing and restores the original favicons when the count reaches zero or the seat is disposed.
+One running session is one task; subagent sessions are not counted. The count comes from the `useSessions` selector hook on the `shell.overlay` seat — no polling. The tab badge retargets the page's own light/dark `link[rel="icon"]` hrefs to a generated `data:` SVG, so it works in every browser; the count is also mirrored to `navigator.setAppBadge()` where available. The plugin paints nothing and restores the original favicons when the count reaches zero or the seat is disposed.
 
 ## License
 
